@@ -1,0 +1,26 @@
+*.iml
+.gradle/
+.kotlin/
+build/
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Android Studio
+.idea/
+*.hprof
+.navigation/
+
+# Keystore
+*.jks
+*.keystore
+
+# macOS
+.DS_Store
+
+# Claude Code session state
+.claude/
+
+# Gradle wrapper distribution (kept: gradlew, gradlew.bat, gradle/wrapper/gradle-wrapper.properties + jar)
+!gradle/wrapper/gradle-wrapper.jar
