@@ -14,21 +14,26 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.yankvasya.alarmity.ui.alarmlist.AlarmListScreen
 
 private const val ROUTE_ALARM_LIST = "alarm_list"
+private const val ROUTE_EDIT_ALARM = "edit_alarm"
 
 @Composable
 fun AlarmityNavHost() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = ROUTE_ALARM_LIST) {
         composable(ROUTE_ALARM_LIST) {
-            AlarmListPlaceholder()
+            AlarmListScreen(onAddAlarm = { navController.navigate(ROUTE_EDIT_ALARM) })
+        }
+        composable(ROUTE_EDIT_ALARM) {
+            EditAlarmPlaceholder()
         }
     }
 }
 
 @Composable
-private fun AlarmListPlaceholder() {
+private fun EditAlarmPlaceholder() {
     Scaffold { innerPadding ->
         Column(
             modifier = Modifier
@@ -38,8 +43,8 @@ private fun AlarmListPlaceholder() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = "Alarmity", style = MaterialTheme.typography.headlineMedium)
-            Text(text = "Alarm list coming in the next milestone", style = MaterialTheme.typography.bodyMedium)
+            Text(text = "Create alarm", style = MaterialTheme.typography.headlineMedium)
+            Text(text = "Coming in the next milestone", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
