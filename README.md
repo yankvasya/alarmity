@@ -25,3 +25,7 @@ These reference `~/Library/Android/sdk` by default; set `ANDROID_HOME` to overri
 ## CI/CD
 
 <!-- Filled in once the release pipeline is wired up. -->
+
+## License
+
+GPL-3.0 — see [LICENSE](LICENSE). You're free to use, modify, and redistribute this code, but any distributed derivative work must also be open source under the same license.
