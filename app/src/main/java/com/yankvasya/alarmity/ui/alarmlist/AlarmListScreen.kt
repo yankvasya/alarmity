@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.yankvasya.alarmity.domain.model.Alarm
+import com.yankvasya.alarmity.ui.permissions.PermissionsBanner
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
@@ -61,16 +62,19 @@ fun AlarmListScreen(
             }
         },
     ) { innerPadding ->
-        if (alarms.isEmpty()) {
-            EmptyAlarmList(modifier = Modifier.padding(innerPadding))
-        } else {
-            LazyColumn(modifier = Modifier.padding(innerPadding)) {
-                items(alarms, key = { it.id }) { alarm ->
-                    AlarmRow(
-                        alarm = alarm,
-                        onClick = { onEditAlarm(alarm.id) },
-                        onEnabledChange = { viewModel.setEnabled(alarm.id, it) },
-                    )
+        Column(modifier = Modifier.padding(innerPadding)) {
+            PermissionsBanner(modifier = Modifier.padding(top = 8.dp))
+            if (alarms.isEmpty()) {
+                EmptyAlarmList(modifier = Modifier.weight(1f))
+            } else {
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    items(alarms, key = { it.id }) { alarm ->
+                        AlarmRow(
+                            alarm = alarm,
+                            onClick = { onEditAlarm(alarm.id) },
+                            onEnabledChange = { viewModel.setEnabled(alarm.id, it) },
+                        )
+                    }
                 }
             }
         }
