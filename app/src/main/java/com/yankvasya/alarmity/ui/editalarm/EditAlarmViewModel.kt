@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yankvasya.alarmity.data.repository.AlarmRepository
 import com.yankvasya.alarmity.domain.dismiss.DismissMission
+import com.yankvasya.alarmity.domain.dismiss.DismissMissionRegistry
 import com.yankvasya.alarmity.domain.model.Alarm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +39,10 @@ data class EditAlarmUiState(
 class EditAlarmViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val alarmRepository: AlarmRepository,
+    dismissMissionRegistry: DismissMissionRegistry,
 ) : ViewModel() {
+
+    val availableMissions: List<DismissMission> = dismissMissionRegistry.all
 
     private val _uiState = MutableStateFlow(
         EditAlarmUiState(alarmId = savedStateHandle.get<Long>(KEY_ALARM_ID) ?: NEW_ALARM_ID),
@@ -74,6 +78,8 @@ class EditAlarmViewModel @Inject constructor(
     fun toggleRepeatDay(day: DayOfWeek) = _uiState.update {
         it.copy(repeatDays = if (day in it.repeatDays) it.repeatDays - day else it.repeatDays + day)
     }
+
+    fun setDismissMission(id: String) = _uiState.update { it.copy(dismissMissionId = id) }
 
     fun save() {
         val state = _uiState.value
