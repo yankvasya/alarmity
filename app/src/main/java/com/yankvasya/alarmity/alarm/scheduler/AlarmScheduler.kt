@@ -23,20 +23,28 @@ class AlarmScheduler @Inject constructor(
             .atZone(ZoneId.systemDefault())
             .toInstant()
             .toEpochMilli()
+        scheduleAt(alarm.id, triggerAtMillis)
+    }
 
-        val showIntent = PendingIntent.getActivity(
-            context,
-            alarm.id.toInt(),
-            Intent(context, MainActivity::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
-        val operation = alarmOperationPendingIntent(alarm.id)
-
-        alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(triggerAtMillis, showIntent), operation)
+    /** Schedules a one-shot wake at [triggerAtMillis], bypassing the alarm's own repeat schedule. */
+    fun scheduleSnooze(alarmId: Long, triggerAtMillis: Long) {
+        scheduleAt(alarmId, triggerAtMillis)
     }
 
     fun cancel(alarmId: Long) {
         alarmManager.cancel(alarmOperationPendingIntent(alarmId))
+    }
+
+    private fun scheduleAt(alarmId: Long, triggerAtMillis: Long) {
+        val showIntent = PendingIntent.getActivity(
+            context,
+            alarmId.toInt(),
+            Intent(context, MainActivity::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        val operation = alarmOperationPendingIntent(alarmId)
+
+        alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(triggerAtMillis, showIntent), operation)
     }
 
     private fun alarmOperationPendingIntent(alarmId: Long): PendingIntent =
