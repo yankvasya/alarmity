@@ -9,6 +9,7 @@ import android.content.pm.ServiceInfo
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import android.os.VibrationEffect
@@ -19,11 +20,13 @@ import com.yankvasya.alarmity.MainActivity
 import com.yankvasya.alarmity.R
 import com.yankvasya.alarmity.alarm.receiver.AlarmReceiver
 import com.yankvasya.alarmity.data.repository.AlarmRepository
+import com.yankvasya.alarmity.data.settings.SettingsRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,6 +35,7 @@ import javax.inject.Inject
 class RingingService : Service() {
 
     @Inject lateinit var alarmRepository: AlarmRepository
+    @Inject lateinit var settingsRepository: SettingsRepository
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var mediaPlayer: MediaPlayer? = null
@@ -56,13 +60,14 @@ class RingingService : Service() {
     private fun startRinging(alarmId: Long) {
         serviceScope.launch {
             val label = alarmRepository.getAlarm(alarmId)?.label.orEmpty()
+            val settings = settingsRepository.settings.first()
             startForeground(
                 NOTIFICATION_ID,
                 buildNotification(alarmId, label),
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK,
             )
-            playSound()
-            startVibration()
+            playSound(settings.alarmSoundUri)
+            if (settings.vibrationEnabled) startVibration()
         }
     }
 
@@ -91,8 +96,9 @@ class RingingService : Service() {
             .build()
     }
 
-    private fun playSound() {
-        val uri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM)
+    private fun playSound(alarmSoundUri: String?) {
+        val uri = alarmSoundUri?.let(Uri::parse)
+            ?: RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM)
             ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(

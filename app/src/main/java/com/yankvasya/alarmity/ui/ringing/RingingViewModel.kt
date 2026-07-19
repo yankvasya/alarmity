@@ -7,15 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.yankvasya.alarmity.alarm.scheduler.AlarmScheduler
 import com.yankvasya.alarmity.alarm.service.RingingService
 import com.yankvasya.alarmity.data.repository.AlarmRepository
+import com.yankvasya.alarmity.data.settings.SettingsRepository
 import com.yankvasya.alarmity.domain.dismiss.DismissMission
 import com.yankvasya.alarmity.domain.dismiss.DismissMissionRegistry
 import com.yankvasya.alarmity.domain.model.Alarm
-import com.yankvasya.alarmity.domain.model.AlarmDefaults
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -30,6 +31,7 @@ class RingingViewModel @Inject constructor(
     private val alarmRepository: AlarmRepository,
     private val alarmScheduler: AlarmScheduler,
     private val dismissMissionRegistry: DismissMissionRegistry,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val alarmId: Long = savedStateHandle.get<Long>(KEY_ALARM_ID) ?: -1L
@@ -60,12 +62,15 @@ class RingingViewModel @Inject constructor(
 
     fun snooze() {
         RingingService.stop(context)
-        val triggerAtMillis = LocalDateTime.now()
-            .plusMinutes(AlarmDefaults.SNOOZE_MINUTES)
-            .atZone(ZoneId.systemDefault())
-            .toInstant()
-            .toEpochMilli()
-        alarmScheduler.scheduleSnooze(alarmId, triggerAtMillis)
-        _finished.value = true
+        viewModelScope.launch {
+            val snoozeMinutes = settingsRepository.settings.first().snoozeMinutes
+            val triggerAtMillis = LocalDateTime.now()
+                .plusMinutes(snoozeMinutes)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+            alarmScheduler.scheduleSnooze(alarmId, triggerAtMillis)
+            _finished.value = true
+        }
     }
 }
