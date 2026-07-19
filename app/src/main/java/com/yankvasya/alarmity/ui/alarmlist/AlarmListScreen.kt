@@ -73,6 +73,7 @@ fun AlarmListScreen(
                             alarm = alarm,
                             onClick = { onEditAlarm(alarm.id) },
                             onEnabledChange = { viewModel.setEnabled(alarm.id, it) },
+                            modifier = Modifier.animateItem(),
                         )
                     }
                 }
@@ -98,9 +99,14 @@ private fun EmptyAlarmList(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AlarmRow(alarm: Alarm, onClick: () -> Unit, onEnabledChange: (Boolean) -> Unit) {
+private fun AlarmRow(
+    alarm: Alarm,
+    onClick: () -> Unit,
+    onEnabledChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     ListItem(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         headlineContent = {
