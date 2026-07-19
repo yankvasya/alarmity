@@ -15,8 +15,10 @@ android {
         applicationId = "com.yankvasya.alarmity"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
-        versionName = "0.1.0"
+        // GITHUB_RUN_NUMBER is set automatically by Actions; local/dev builds fall back to a fixed version.
+        val ciRunNumber = System.getenv("GITHUB_RUN_NUMBER")
+        versionCode = ciRunNumber?.toIntOrNull() ?: 1
+        versionName = if (ciRunNumber != null) "0.1.$ciRunNumber-alpha" else "0.1.0-dev"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
