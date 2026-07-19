@@ -11,9 +11,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.yankvasya.alarmity.domain.model.Alarm
+import com.yankvasya.alarmity.ui.common.FloatingAlarmOffIcon
+import com.yankvasya.alarmity.ui.permissions.PermissionsBanner
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
@@ -37,28 +41,42 @@ import java.util.Locale
 fun AlarmListScreen(
     onAddAlarm: () -> Unit,
     onEditAlarm: (Long) -> Unit,
+    onOpenSettings: () -> Unit,
     viewModel: AlarmListViewModel = hiltViewModel(),
 ) {
     val alarms by viewModel.alarms.collectAsState()
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Alarmity") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Alarmity") },
+                actions = {
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(Icons.Filled.Settings, contentDescription = "Settings")
+                    }
+                },
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddAlarm) {
                 Icon(Icons.Filled.Add, contentDescription = "Add alarm")
             }
         },
     ) { innerPadding ->
-        if (alarms.isEmpty()) {
-            EmptyAlarmList(modifier = Modifier.padding(innerPadding))
-        } else {
-            LazyColumn(modifier = Modifier.padding(innerPadding)) {
-                items(alarms, key = { it.id }) { alarm ->
-                    AlarmRow(
-                        alarm = alarm,
-                        onClick = { onEditAlarm(alarm.id) },
-                        onEnabledChange = { viewModel.setEnabled(alarm.id, it) },
-                    )
+        Column(modifier = Modifier.padding(innerPadding)) {
+            PermissionsBanner(modifier = Modifier.padding(top = 8.dp))
+            if (alarms.isEmpty()) {
+                EmptyAlarmList(modifier = Modifier.weight(1f))
+            } else {
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    items(alarms, key = { it.id }) { alarm ->
+                        AlarmRow(
+                            alarm = alarm,
+                            onClick = { onEditAlarm(alarm.id) },
+                            onEnabledChange = { viewModel.setEnabled(alarm.id, it) },
+                            modifier = Modifier.animateItem(),
+                        )
+                    }
                 }
             }
         }
@@ -75,6 +93,7 @@ private fun EmptyAlarmList(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            FloatingAlarmOffIcon(modifier = Modifier.padding(bottom = 8.dp))
             Text(text = "No alarms yet", style = MaterialTheme.typography.titleMedium)
             Text(text = "Tap + to create one", style = MaterialTheme.typography.bodyMedium)
         }
@@ -82,9 +101,14 @@ private fun EmptyAlarmList(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AlarmRow(alarm: Alarm, onClick: () -> Unit, onEnabledChange: (Boolean) -> Unit) {
+private fun AlarmRow(
+    alarm: Alarm,
+    onClick: () -> Unit,
+    onEnabledChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     ListItem(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         headlineContent = {
