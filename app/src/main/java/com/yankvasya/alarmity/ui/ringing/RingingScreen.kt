@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.yankvasya.alarmity.ui.common.WigglingAlarmIcon
 import com.yankvasya.alarmity.ui.common.pressScale
 
 @Composable
@@ -46,6 +47,7 @@ fun RingingScreen(
                 modifier = Modifier.padding(top = 64.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                WigglingAlarmIcon(modifier = Modifier.padding(bottom = 16.dp))
                 alarm?.let {
                     Text(
                         text = "%02d:%02d".format(it.hour, it.minute),
