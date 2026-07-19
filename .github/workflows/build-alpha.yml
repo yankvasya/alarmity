@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,3 +34,40 @@ jobs:
         with:
           name: alarmity-debug
           path: app/build/outputs/apk/debug/*.apk
+
+      - name: Determine version
+        id: version
+        run: |
+          echo "name=0.1.${{ github.run_number }}-alpha" >> "$GITHUB_OUTPUT"
+          echo "tag=v0.1.${{ github.run_number }}-alpha" >> "$GITHUB_OUTPUT"
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 --match 'v*' 2>/dev/null || true)
+          RANGE="${PREV_TAG:+$PREV_TAG..}HEAD"
+
+          # `|| true` after each grep: with pipefail (the default for Actions run steps), a grep
+          # that matches nothing (e.g. no fix: commits this release) would otherwise abort the step.
+          ADDED=$(git log "$RANGE" --pretty=format:'%s' --no-merges | { grep -E '^feat(\(.+\))?!?:' || true; } | sed -E 's/^feat(\(.+\))?!?: */- /')
+          FIXED=$(git log "$RANGE" --pretty=format:'%s' --no-merges | { grep -E '^fix(\(.+\))?!?:' || true; } | sed -E 's/^fix(\(.+\))?!?: */- /')
+          CHANGED=$(git log "$RANGE" --pretty=format:'%s' --no-merges | { grep -vE '^(feat|fix)(\(.+\))?!?:' || true; } | sed -E 's/^[a-z]+(\(.+\))?!?: */- /')
+
+          DELIM="CHANGELOG_$(date +%s%N)"
+          {
+            echo "changelog<<$DELIM"
+            [ -n "$ADDED" ] && printf '### Added\n%s\n\n' "$ADDED"
+            [ -n "$FIXED" ] && printf '### Fixed\n%s\n\n' "$FIXED"
+            [ -n "$CHANGED" ] && printf '### Changed\n%s\n\n' "$CHANGED"
+            if [ -z "$ADDED$FIXED$CHANGED" ]; then echo "No notable changes."; fi
+            echo "$DELIM"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.name }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          prerelease: true
+          files: app/build/outputs/apk/debug/*.apk

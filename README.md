@@ -24,4 +24,11 @@ These reference `~/Library/Android/sdk` by default; set `ANDROID_HOME` to overri
 
 ## CI/CD
 
-<!-- Filled in once the release pipeline is wired up. -->
+`.github/workflows/build-alpha.yml` builds an alpha APK and publishes it as a GitHub Release on every push to `main`:
+
+1. Builds `assembleDebug` with JDK 17 and Gradle caching.
+2. Versions automatically: `versionName` is `0.1.<run number>-alpha`, computed from the `GITHUB_RUN_NUMBER` environment variable that Actions sets for every run (local/dev builds fall back to `0.1.0-dev`). Every build gets a unique, incrementing, readable version without manual bumping.
+3. Generates a changelog from conventional commit messages (`feat:`, `fix:`, everything else) since the last `v*` tag, grouped into `### Added` / `### Fixed` / `### Changed`.
+4. Publishes a pre-release GitHub Release tagged `v0.1.<run number>-alpha`, with the APK attached and the generated changelog as the release body.
+
+To trigger a build manually (e.g. without pushing to `main`), go to the repo's **Actions** tab → **Build Alpha** → **Run workflow**.
