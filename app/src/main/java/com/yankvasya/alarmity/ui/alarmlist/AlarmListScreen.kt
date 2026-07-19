@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.yankvasya.alarmity.domain.model.Alarm
+import com.yankvasya.alarmity.ui.common.FloatingAlarmOffIcon
 import com.yankvasya.alarmity.ui.permissions.PermissionsBanner
 import java.time.DayOfWeek
 import java.time.format.TextStyle
@@ -73,6 +74,7 @@ fun AlarmListScreen(
                             alarm = alarm,
                             onClick = { onEditAlarm(alarm.id) },
                             onEnabledChange = { viewModel.setEnabled(alarm.id, it) },
+                            modifier = Modifier.animateItem(),
                         )
                     }
                 }
@@ -91,6 +93,7 @@ private fun EmptyAlarmList(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            FloatingAlarmOffIcon(modifier = Modifier.padding(bottom = 8.dp))
             Text(text = "No alarms yet", style = MaterialTheme.typography.titleMedium)
             Text(text = "Tap + to create one", style = MaterialTheme.typography.bodyMedium)
         }
@@ -98,9 +101,14 @@ private fun EmptyAlarmList(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AlarmRow(alarm: Alarm, onClick: () -> Unit, onEnabledChange: (Boolean) -> Unit) {
+private fun AlarmRow(
+    alarm: Alarm,
+    onClick: () -> Unit,
+    onEnabledChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     ListItem(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         headlineContent = {
