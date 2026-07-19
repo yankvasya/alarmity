@@ -1,5 +1,6 @@
 package com.yankvasya.alarmity.ui.alarmlist
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.yankvasya.alarmity.domain.model.Alarm
 import java.time.DayOfWeek
 import java.time.format.TextStyle
@@ -35,6 +36,7 @@ import java.util.Locale
 @Composable
 fun AlarmListScreen(
     onAddAlarm: () -> Unit,
+    onEditAlarm: (Long) -> Unit,
     viewModel: AlarmListViewModel = hiltViewModel(),
 ) {
     val alarms by viewModel.alarms.collectAsState()
@@ -52,7 +54,11 @@ fun AlarmListScreen(
         } else {
             LazyColumn(modifier = Modifier.padding(innerPadding)) {
                 items(alarms, key = { it.id }) { alarm ->
-                    AlarmRow(alarm = alarm, onEnabledChange = { viewModel.setEnabled(alarm.id, it) })
+                    AlarmRow(
+                        alarm = alarm,
+                        onClick = { onEditAlarm(alarm.id) },
+                        onEnabledChange = { viewModel.setEnabled(alarm.id, it) },
+                    )
                 }
             }
         }
@@ -76,9 +82,11 @@ private fun EmptyAlarmList(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AlarmRow(alarm: Alarm, onEnabledChange: (Boolean) -> Unit) {
+private fun AlarmRow(alarm: Alarm, onClick: () -> Unit, onEnabledChange: (Boolean) -> Unit) {
     ListItem(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         headlineContent = {
             Text(
                 text = "%02d:%02d".format(alarm.hour, alarm.minute),
