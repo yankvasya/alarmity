@@ -29,17 +29,30 @@ jobs:
       - name: Build debug APK
         run: ./gradlew :app:assembleDebug
 
+      - name: Determine version and rename APK
+        id: version
+        run: |
+          METADATA=app/build/outputs/apk/debug/output-metadata.json
+          VERSION_NAME=$(jq -r '.elements[0].versionName' "$METADATA")
+          RELEASE_VERSION=$(echo "$VERSION_NAME" | sed -E 's/-(alpha|dev)$//')
+          BUILD=${{ github.run_number }}
+
+          APK_NAME="alarmity-${VERSION_NAME}-${BUILD}.apk"
+          mv "app/build/outputs/apk/debug/$(jq -r '.elements[0].outputFile' "$METADATA")" \
+             "app/build/outputs/apk/debug/$APK_NAME"
+
+          {
+            echo "apk_path=app/build/outputs/apk/debug/$APK_NAME"
+            echo "apk_name=$APK_NAME"
+            echo "tag=v${VERSION_NAME}-${BUILD}"
+            echo "title=Alarmity ${RELEASE_VERSION} (Alpha) — Build ${BUILD}"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v7
         with:
-          name: alarmity-debug
-          path: app/build/outputs/apk/debug/*.apk
-
-      - name: Determine version
-        id: version
-        run: |
-          echo "name=0.1.${{ github.run_number }}-alpha" >> "$GITHUB_OUTPUT"
-          echo "tag=v0.1.${{ github.run_number }}-alpha" >> "$GITHUB_OUTPUT"
+          name: ${{ steps.version.outputs.apk_name }}
+          path: ${{ steps.version.outputs.apk_path }}
 
       - name: Generate changelog
         id: changelog
@@ -67,7 +80,10 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.version.outputs.tag }}
-          name: ${{ steps.version.outputs.name }}
+          name: ${{ steps.version.outputs.title }}
           body: ${{ steps.changelog.outputs.changelog }}
-          prerelease: true
-          files: app/build/outputs/apk/debug/*.apk
+          # Not flagged prerelease: alpha status is communicated through the title/version instead.
+          # GitHub's "latest release" (and the repo sidebar's release card) explicitly excludes
+          # prereleases, so marking these prerelease would mean the repo page never shows one.
+          prerelease: false
+          files: ${{ steps.version.outputs.apk_path }}
