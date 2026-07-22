@@ -12,9 +12,11 @@ import com.yankvasya.alarmity.ui.editalarm.EditAlarmScreen
 import com.yankvasya.alarmity.ui.editalarm.NEW_ALARM_ID
 import com.yankvasya.alarmity.ui.ringing.RingingScreen
 import com.yankvasya.alarmity.ui.settings.SettingsScreen
+import com.yankvasya.alarmity.ui.stats.StatsScreen
 
 private const val ROUTE_ALARM_LIST = "alarm_list"
 private const val ROUTE_SETTINGS = "settings"
+private const val ROUTE_STATS = "stats"
 private const val ARG_ALARM_ID = "alarmId"
 private const val ROUTE_EDIT_ALARM = "edit_alarm?alarmId={$ARG_ALARM_ID}"
 private const val ROUTE_RINGING = "ringing/{$ARG_ALARM_ID}"
@@ -38,10 +40,14 @@ fun AlarmityNavHost(ringingAlarmId: Long? = null) {
                 onAddAlarm = { navController.navigate(editAlarmRoute()) },
                 onEditAlarm = { alarmId -> navController.navigate(editAlarmRoute(alarmId)) },
                 onOpenSettings = { navController.navigate(ROUTE_SETTINGS) },
+                onOpenStats = { navController.navigate(ROUTE_STATS) },
             )
         }
         composable(ROUTE_SETTINGS) {
             SettingsScreen(onBack = { navController.popBackStack() })
+        }
+        composable(ROUTE_STATS) {
+            StatsScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = ROUTE_EDIT_ALARM,

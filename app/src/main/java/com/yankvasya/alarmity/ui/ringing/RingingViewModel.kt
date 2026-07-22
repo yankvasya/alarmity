@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yankvasya.alarmity.alarm.scheduler.AlarmScheduler
 import com.yankvasya.alarmity.alarm.service.RingingService
+import com.yankvasya.alarmity.data.repository.AlarmHistoryRepository
 import com.yankvasya.alarmity.data.repository.AlarmRepository
 import com.yankvasya.alarmity.data.settings.SettingsRepository
 import com.yankvasya.alarmity.domain.dismiss.DismissMission
@@ -32,6 +33,7 @@ class RingingViewModel @Inject constructor(
     private val alarmScheduler: AlarmScheduler,
     private val dismissMissionRegistry: DismissMissionRegistry,
     private val settingsRepository: SettingsRepository,
+    private val alarmHistoryRepository: AlarmHistoryRepository,
 ) : ViewModel() {
 
     private val alarmId: Long = savedStateHandle.get<Long>(KEY_ALARM_ID) ?: -1L
@@ -57,12 +59,14 @@ class RingingViewModel @Inject constructor(
 
     fun dismiss() {
         RingingService.stop(context)
+        viewModelScope.launch { alarmHistoryRepository.recordDismissed(alarmId) }
         _finished.value = true
     }
 
     fun snooze() {
         RingingService.stop(context)
         viewModelScope.launch {
+            alarmHistoryRepository.recordSnoozed(alarmId)
             val snoozeMinutes = settingsRepository.settings.first().snoozeMinutes
             val triggerAtMillis = LocalDateTime.now()
                 .plusMinutes(snoozeMinutes)
