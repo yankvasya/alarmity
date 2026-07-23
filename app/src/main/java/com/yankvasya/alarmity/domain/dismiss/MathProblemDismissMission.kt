@@ -17,9 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.yankvasya.alarmity.R
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -38,7 +40,7 @@ private fun randomProblem(): MathProblem {
 
 class MathProblemDismissMission @Inject constructor() : DismissMission {
     override val id: String = "math_problem"
-    override val displayName: String = "Solve a math problem"
+    override val displayNameRes: Int = R.string.mission_math_problem
 
     @Composable
     override fun Content(onComplete: () -> Unit) {
@@ -65,18 +67,18 @@ class MathProblemDismissMission @Inject constructor() : DismissMission {
         ) {
             Text(text = problem.text, style = MaterialTheme.typography.displaySmall)
             if (wasWrong) {
-                Text(text = "Not quite — try again", style = MaterialTheme.typography.bodyMedium)
+                Text(text = stringResource(R.string.math_wrong_answer), style = MaterialTheme.typography.bodyMedium)
             }
             OutlinedTextField(
                 value = answer,
                 onValueChange = { answer = it.filter(Char::isDigit) },
-                label = { Text("Answer") },
+                label = { Text(stringResource(R.string.answer_field)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { submit() }),
             )
             Button(onClick = ::submit) {
-                Text("Submit")
+                Text(stringResource(R.string.submit))
             }
         }
     }

@@ -1,3 +1,7 @@
 <resources>
-    <style name="Theme.Alarmity" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- AppCompat-derived (not a plain platform theme) — required by AppCompatActivity, which
+         MainActivity uses for AppCompatDelegate.setApplicationLocales() to work with Compose.
+         All actual visual theming happens in Compose's AlarmityTheme; this is just the brief
+         bootstrap theme before setContent() replaces everything. -->
+    <style name="Theme.Alarmity" parent="Theme.AppCompat.DayNight.NoActionBar" />
 </resources>

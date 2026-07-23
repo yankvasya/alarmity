@@ -34,8 +34,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.yankvasya.alarmity.R
 import com.yankvasya.alarmity.domain.dismiss.DismissMission
 import java.time.DayOfWeek
 import java.time.format.TextStyle
@@ -56,16 +58,18 @@ fun EditAlarmScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (uiState.isNew) "New alarm" else "Edit alarm") },
+                title = {
+                    Text(stringResource(if (uiState.isNew) R.string.edit_alarm_title_new else R.string.edit_alarm_title_edit))
+                },
                 navigationIcon = {
                     IconButton(onClick = onDone) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                     }
                 },
                 actions = {
                     if (!uiState.isNew) {
                         IconButton(onClick = { viewModel.delete() }) {
-                            Icon(Icons.Filled.Delete, contentDescription = "Delete alarm")
+                            Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.cd_delete_alarm))
                         }
                     }
                 },
@@ -124,7 +128,7 @@ private fun EditAlarmForm(
         OutlinedTextField(
             value = uiState.label,
             onValueChange = onLabelChange,
-            label = { Text("Label") },
+            label = { Text(stringResource(R.string.label_field)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -143,7 +147,7 @@ private fun EditAlarmForm(
             onClick = { onSave(timePickerState.hour, timePickerState.minute) },
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Save")
+            Text(stringResource(R.string.save))
         }
     }
 }
@@ -159,7 +163,7 @@ private fun DismissMissionSelector(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(text = "Dismiss with", style = MaterialTheme.typography.labelLarge)
+        Text(text = stringResource(R.string.dismiss_with), style = MaterialTheme.typography.labelLarge)
         Row(
             modifier = Modifier.horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -168,7 +172,7 @@ private fun DismissMissionSelector(
                 FilterChip(
                     selected = mission.id == selectedId,
                     onClick = { onSelect(mission.id) },
-                    label = { Text(mission.displayName) },
+                    label = { Text(stringResource(mission.displayNameRes)) },
                 )
             }
         }

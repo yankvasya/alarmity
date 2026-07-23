@@ -28,8 +28,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.yankvasya.alarmity.R
 import com.yankvasya.alarmity.domain.model.Alarm
 import com.yankvasya.alarmity.ui.common.FloatingAlarmOffIcon
 import com.yankvasya.alarmity.ui.permissions.PermissionsBanner
@@ -51,20 +53,20 @@ fun AlarmListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Alarmity") },
+                title = { Text(stringResource(R.string.app_name)) },
                 actions = {
                     IconButton(onClick = onOpenStats) {
-                        Icon(Icons.Filled.Insights, contentDescription = "Statistics")
+                        Icon(Icons.Filled.Insights, contentDescription = stringResource(R.string.cd_statistics))
                     }
                     IconButton(onClick = onOpenSettings) {
-                        Icon(Icons.Filled.Settings, contentDescription = "Settings")
+                        Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.cd_settings))
                     }
                 },
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddAlarm) {
-                Icon(Icons.Filled.Add, contentDescription = "Add alarm")
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.cd_add_alarm))
             }
         },
     ) { innerPadding ->
@@ -99,8 +101,8 @@ private fun EmptyAlarmList(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             FloatingAlarmOffIcon(modifier = Modifier.padding(bottom = 8.dp))
-            Text(text = "No alarms yet", style = MaterialTheme.typography.titleMedium)
-            Text(text = "Tap + to create one", style = MaterialTheme.typography.bodyMedium)
+            Text(text = stringResource(R.string.empty_state_title), style = MaterialTheme.typography.titleMedium)
+            Text(text = stringResource(R.string.empty_state_subtitle), style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
@@ -131,8 +133,9 @@ private fun AlarmRow(
     )
 }
 
+@Composable
 private fun Alarm.repeatSummary(): String {
-    if (isOneOff) return "One-off"
+    if (isOneOff) return stringResource(R.string.repeat_one_off)
     val orderedDays = listOf(
         DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY,
         DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY,

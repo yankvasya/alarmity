@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">Alarmity</string>
+
+    <!-- Alarm list -->
+    <string name="cd_statistics">Статистика</string>
+    <string name="cd_settings">Настройки</string>
+    <string name="cd_add_alarm">Добавить будильник</string>
+    <string name="empty_state_title">Пока нет будильников</string>
+    <string name="empty_state_subtitle">Нажмите +, чтобы создать</string>
+    <string name="repeat_one_off">Однократно</string>
+
+    <!-- Edit alarm -->
+    <string name="cd_back">Назад</string>
+    <string name="cd_delete_alarm">Удалить будильник</string>
+    <string name="edit_alarm_title_new">Новый будильник</string>
+    <string name="edit_alarm_title_edit">Редактировать будильник</string>
+    <string name="label_field">Название</string>
+    <string name="save">Сохранить</string>
+    <string name="dismiss_with">Способ отключения</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Настройки</string>
+    <string name="snooze_duration">Длительность отсрочки</string>
+    <string name="minutes_format">%d мин</string>
+    <string name="alarm_sound">Звук будильника</string>
+    <string name="sound_default">По умолчанию</string>
+    <string name="vibration">Вибрация</string>
+    <string name="language_setting_label">Язык</string>
+    <string name="language_system">Как в системе</string>
+    <string name="language_english">English</string>
+    <string name="language_russian">Русский</string>
+
+    <!-- Ringing -->
+    <string name="snooze">Отложить</string>
+    <string name="notification_alarm_title">Будильник</string>
+    <string name="notification_time_to_wake_up">Пора вставать</string>
+    <string name="notification_channel_alarms">Будильники</string>
+
+    <!-- Statistics -->
+    <string name="statistics_title">Статистика</string>
+    <string name="current_streak">Текущая серия</string>
+    <string name="longest_streak_format">Лучшая серия: %s</string>
+    <string name="last_7_days">Последние 7 дней</string>
+    <string name="stat_dismissed">Отключения</string>
+    <string name="stat_snoozed">Отсрочки</string>
+    <plurals name="streak_days">
+        <item quantity="one">%d день</item>
+        <item quantity="few">%d дня</item>
+        <item quantity="many">%d дней</item>
+        <item quantity="other">%d дня</item>
+    </plurals>
+
+    <!-- Permissions banner -->
+    <string name="permission_notification_message">Разрешите уведомления, чтобы будильник мог показываться поверх экрана блокировки при срабатывании.</string>
+    <string name="allow">Разрешить</string>
+    <string name="battery_optimization_message_format">Устройства %s могут незаметно останавливать будильники в фоновом режиме. Исключите Alarmity из ограничений батареи, чтобы будильники работали надёжно.</string>
+    <string name="fix">Исправить</string>
+
+    <!-- Dismiss missions -->
+    <string name="mission_simple_tap">Нажатие для отключения</string>
+    <string name="mission_math_problem">Решить пример</string>
+    <string name="math_wrong_answer">Не то — попробуйте ещё раз</string>
+    <string name="answer_field">Ответ</string>
+    <string name="submit">Подтвердить</string>
+</resources>

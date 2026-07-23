@@ -13,7 +13,7 @@ class AlarmityApp : Application() {
         super.onCreate()
         val channel = NotificationChannel(
             AlarmReceiver.CHANNEL_ID,
-            "Alarms",
+            getString(R.string.notification_channel_alarms),
             NotificationManager.IMPORTANCE_HIGH,
         )
         getSystemService(NotificationManager::class.java).createNotificationChannel(channel)

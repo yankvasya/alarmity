@@ -6,6 +6,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,11 +28,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.yankvasya.alarmity.R
 import com.yankvasya.alarmity.domain.model.Settings
 
 private val SNOOZE_OPTIONS_MINUTES = listOf(5L, 10L, 15L, 20L)
@@ -47,10 +53,10 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                     }
                 },
             )
@@ -86,9 +92,11 @@ private fun SettingsContent(
         }
     }
 
+    val defaultSoundLabel = stringResource(R.string.sound_default)
+
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Snooze duration",
+            text = stringResource(R.string.snooze_duration),
             style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
         )
@@ -100,16 +108,16 @@ private fun SettingsContent(
                 FilterChip(
                     selected = settings.snoozeMinutes == minutes,
                     onClick = { onSnoozeMinutesChange(minutes) },
-                    label = { Text("$minutes min") },
+                    label = { Text(stringResource(R.string.minutes_format, minutes)) },
                 )
             }
         }
 
-        val soundTitle = remember(settings.alarmSoundUri) {
+        val soundTitle = remember(settings.alarmSoundUri, defaultSoundLabel) {
             settings.alarmSoundUri
                 ?.let { Uri.parse(it) }
                 ?.let { RingtoneManager.getRingtone(context, it)?.getTitle(context) }
-                ?: "Default"
+                ?: defaultSoundLabel
         }
         ListItem(
             modifier = Modifier.clickable {
@@ -117,18 +125,75 @@ private fun SettingsContent(
                     .let { current -> buildRingtonePickerIntent(current) }
                 soundPickerLauncher.launch(intent)
             },
-            headlineContent = { Text("Alarm sound") },
+            headlineContent = { Text(stringResource(R.string.alarm_sound)) },
             supportingContent = { Text(soundTitle) },
         )
 
         ListItem(
             modifier = Modifier.clickable { onVibrationEnabledChange(!settings.vibrationEnabled) },
-            headlineContent = { Text("Vibration") },
+            headlineContent = { Text(stringResource(R.string.vibration)) },
             trailingContent = {
                 Switch(checked = settings.vibrationEnabled, onCheckedChange = onVibrationEnabledChange)
             },
         )
+
+        LanguageSelector()
     }
+}
+
+/**
+ * Reads/writes the per-app language via AppCompatDelegate rather than our own Settings/DataStore
+ * model: AndroidX already persists and reapplies the choice automatically (autoStoreLocales, see
+ * the manifest), and setApplicationLocales() recreates the activity, which is what actually
+ * refreshes every stringResource() call in the tree — a second storage path would just be
+ * redundant and could drift out of sync with the real one AppCompat is using.
+ */
+@Composable
+private fun LanguageSelector() {
+    var selectedTag by remember {
+        mutableStateOf(AppCompatDelegate.getApplicationLocales().get(0)?.language)
+    }
+
+    Text(
+        text = stringResource(R.string.language_setting_label),
+        style = MaterialTheme.typography.titleSmall,
+        modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
+    )
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        LanguageChip(
+            label = stringResource(R.string.language_system),
+            selected = selectedTag == null,
+            onClick = {
+                selectedTag = null
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
+            },
+        )
+        LanguageChip(
+            label = stringResource(R.string.language_english),
+            selected = selectedTag == "en",
+            onClick = {
+                selectedTag = "en"
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("en"))
+            },
+        )
+        LanguageChip(
+            label = stringResource(R.string.language_russian),
+            selected = selectedTag == "ru",
+            onClick = {
+                selectedTag = "ru"
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("ru"))
+            },
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LanguageChip(label: String, selected: Boolean, onClick: () -> Unit) {
+    FilterChip(selected = selected, onClick = onClick, label = { Text(label) })
 }
 
 private fun buildRingtonePickerIntent(existingUri: Uri?) =

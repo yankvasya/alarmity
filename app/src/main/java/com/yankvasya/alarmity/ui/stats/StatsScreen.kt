@@ -27,8 +27,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.yankvasya.alarmity.R
 import com.yankvasya.alarmity.domain.model.AlarmStats
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,10 +42,10 @@ fun StatsScreen(onBack: () -> Unit, viewModel: StatsViewModel = hiltViewModel())
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Statistics") },
+                title = { Text(stringResource(R.string.statistics_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                     }
                 },
             )
@@ -78,10 +81,16 @@ private fun StreakCard(currentStreak: Int, longestStreak: Int) {
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(48.dp),
             )
-            Text(text = "$currentStreak day${if (currentStreak == 1) "" else "s"}", style = MaterialTheme.typography.displaySmall)
-            Text(text = "Current streak", style = MaterialTheme.typography.bodyMedium)
             Text(
-                text = "Longest streak: $longestStreak day${if (longestStreak == 1) "" else "s"}",
+                text = pluralStringResource(R.plurals.streak_days, currentStreak, currentStreak),
+                style = MaterialTheme.typography.displaySmall,
+            )
+            Text(text = stringResource(R.string.current_streak), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = stringResource(
+                    R.string.longest_streak_format,
+                    pluralStringResource(R.plurals.streak_days, longestStreak, longestStreak),
+                ),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -91,7 +100,7 @@ private fun StreakCard(currentStreak: Int, longestStreak: Int) {
 @Composable
 private fun LastSevenDaysRow(last7Days: List<Boolean>) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(text = "Last 7 days", style = MaterialTheme.typography.labelLarge)
+        Text(text = stringResource(R.string.last_7_days), style = MaterialTheme.typography.labelLarge)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             last7Days.forEach { dismissed ->
                 Box(
@@ -110,8 +119,8 @@ private fun LastSevenDaysRow(last7Days: List<Boolean>) {
 @Composable
 private fun TotalsRow(stats: AlarmStats) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        StatTile(label = "Dismissed", value = stats.totalDismissals, modifier = Modifier.weight(1f))
-        StatTile(label = "Snoozed", value = stats.totalSnoozes, modifier = Modifier.weight(1f))
+        StatTile(label = stringResource(R.string.stat_dismissed), value = stats.totalDismissals, modifier = Modifier.weight(1f))
+        StatTile(label = stringResource(R.string.stat_snoozed), value = stats.totalSnoozes, modifier = Modifier.weight(1f))
     }
 }
 

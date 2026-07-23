@@ -43,6 +43,12 @@ android {
         compose = true
     }
 
+    // Auto-generates the per-app-language config from the res/values-*/ dirs that exist (en, ru),
+    // rather than hand-maintaining a separate locale_config.xml that could drift out of sync.
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -62,6 +68,7 @@ ksp {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
