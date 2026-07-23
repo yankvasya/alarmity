@@ -16,8 +16,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.yankvasya.alarmity.R
 import com.yankvasya.alarmity.ui.common.WigglingAlarmIcon
 import com.yankvasya.alarmity.ui.common.pressScale
 
@@ -67,7 +69,7 @@ fun RingingScreen(
                 interactionSource = snoozeInteractionSource,
                 modifier = Modifier.pressScale(snoozeInteractionSource),
             ) {
-                Text("Snooze")
+                Text(stringResource(R.string.snooze))
             }
         }
     }

@@ -5,7 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 private class FakeDismissMission(override val id: String) : DismissMission {
-    override val displayName: String = id
+    override val displayNameRes: Int = 0
 
     @Composable
     override fun Content(onComplete: () -> Unit) = Unit

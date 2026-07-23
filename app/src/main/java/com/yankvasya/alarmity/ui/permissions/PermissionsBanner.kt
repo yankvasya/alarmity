@@ -23,11 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.yankvasya.alarmity.R
 import com.yankvasya.alarmity.permissions.DeviceCompatibility
 
 private data class PermissionsBannerState(
@@ -71,16 +73,15 @@ fun PermissionsBanner(modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (state.needsNotificationPermission) {
             BannerCard(
-                message = "Allow notifications so alarms can show over the lock screen when they fire.",
-                actionLabel = "Allow",
+                message = stringResource(R.string.permission_notification_message),
+                actionLabel = stringResource(R.string.allow),
                 onAction = { requestNotificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS) },
             )
         }
         if (state.needsBatteryOptimizationFix) {
             BannerCard(
-                message = "${Build.MANUFACTURER} devices can silently kill alarms in the background. " +
-                    "Exempt Alarmity from battery restrictions to keep alarms reliable.",
-                actionLabel = "Fix",
+                message = stringResource(R.string.battery_optimization_message_format, Build.MANUFACTURER),
+                actionLabel = stringResource(R.string.fix),
                 onAction = { launchBatteryFixIntent(context) },
             )
         }
