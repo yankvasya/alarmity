@@ -1,5 +1,10 @@
 package com.yankvasya.alarmity.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavType
@@ -13,6 +18,9 @@ import com.yankvasya.alarmity.ui.editalarm.NEW_ALARM_ID
 import com.yankvasya.alarmity.ui.ringing.RingingScreen
 import com.yankvasya.alarmity.ui.settings.SettingsScreen
 import com.yankvasya.alarmity.ui.stats.StatsScreen
+
+private const val TRANSITION_DURATION_MILLIS = 280
+private const val SLIDE_FRACTION = 4
 
 private const val ROUTE_ALARM_LIST = "alarm_list"
 private const val ROUTE_SETTINGS = "settings"
@@ -34,7 +42,26 @@ fun AlarmityNavHost(ringingAlarmId: Long? = null) {
         }
     }
 
-    NavHost(navController = navController, startDestination = ROUTE_ALARM_LIST) {
+    NavHost(
+        navController = navController,
+        startDestination = ROUTE_ALARM_LIST,
+        enterTransition = {
+            slideInHorizontally(tween(TRANSITION_DURATION_MILLIS)) { it / SLIDE_FRACTION } +
+                fadeIn(tween(TRANSITION_DURATION_MILLIS))
+        },
+        exitTransition = {
+            slideOutHorizontally(tween(TRANSITION_DURATION_MILLIS)) { -it / SLIDE_FRACTION } +
+                fadeOut(tween(TRANSITION_DURATION_MILLIS))
+        },
+        popEnterTransition = {
+            slideInHorizontally(tween(TRANSITION_DURATION_MILLIS)) { -it / SLIDE_FRACTION } +
+                fadeIn(tween(TRANSITION_DURATION_MILLIS))
+        },
+        popExitTransition = {
+            slideOutHorizontally(tween(TRANSITION_DURATION_MILLIS)) { it / SLIDE_FRACTION } +
+                fadeOut(tween(TRANSITION_DURATION_MILLIS))
+        },
+    ) {
         composable(ROUTE_ALARM_LIST) {
             AlarmListScreen(
                 onAddAlarm = { navController.navigate(editAlarmRoute()) },

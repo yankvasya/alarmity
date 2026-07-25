@@ -15,6 +15,7 @@
     <string name="edit_alarm_title_new">New alarm</string>
     <string name="edit_alarm_title_edit">Edit alarm</string>
     <string name="label_field">Label</string>
+    <string name="repeat_days_label">Repeat</string>
     <string name="save">Save</string>
     <string name="dismiss_with">Dismiss with</string>
 

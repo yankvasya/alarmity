@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.yankvasya.alarmity.R
 import com.yankvasya.alarmity.domain.dismiss.DismissMission
+import com.yankvasya.alarmity.ui.common.SectionCard
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
@@ -133,14 +134,18 @@ private fun EditAlarmForm(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        RepeatDaysSelector(selectedDays = uiState.repeatDays, onToggleDay = onToggleDay)
+        SectionCard(title = stringResource(R.string.repeat_days_label), modifier = Modifier.fillMaxWidth()) {
+            RepeatDaysSelector(selectedDays = uiState.repeatDays, onToggleDay = onToggleDay)
+        }
 
         if (availableMissions.size > 1) {
-            DismissMissionSelector(
-                missions = availableMissions,
-                selectedId = uiState.dismissMissionId,
-                onSelect = onMissionChange,
-            )
+            SectionCard(title = stringResource(R.string.dismiss_with), modifier = Modifier.fillMaxWidth()) {
+                DismissMissionSelector(
+                    missions = availableMissions,
+                    selectedId = uiState.dismissMissionId,
+                    onSelect = onMissionChange,
+                )
+            }
         }
 
         Button(
@@ -159,22 +164,18 @@ private fun DismissMissionSelector(
     selectedId: String,
     onSelect: (String) -> Unit,
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+    Row(
+        modifier = Modifier
+            .horizontalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(text = stringResource(R.string.dismiss_with), style = MaterialTheme.typography.labelLarge)
-        Row(
-            modifier = Modifier.horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            missions.forEach { mission ->
-                FilterChip(
-                    selected = mission.id == selectedId,
-                    onClick = { onSelect(mission.id) },
-                    label = { Text(stringResource(mission.displayNameRes)) },
-                )
-            }
+        missions.forEach { mission ->
+            FilterChip(
+                selected = mission.id == selectedId,
+                onClick = { onSelect(mission.id) },
+                label = { Text(stringResource(mission.displayNameRes)) },
+            )
         }
     }
 }
@@ -187,8 +188,10 @@ private fun RepeatDaysSelector(selectedDays: Set<DayOfWeek>, onToggleDay: (DayOf
         DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY,
     )
     Row(
-        modifier = Modifier.horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier
+            .horizontalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         orderedDays.forEach { day ->
             FilterChip(
