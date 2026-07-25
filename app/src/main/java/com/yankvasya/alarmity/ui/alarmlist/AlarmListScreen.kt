@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,11 +15,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -75,7 +78,11 @@ fun AlarmListScreen(
             if (alarms.isEmpty()) {
                 EmptyAlarmList(modifier = Modifier.weight(1f))
             } else {
-                LazyColumn(modifier = Modifier.weight(1f)) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
                     items(alarms, key = { it.id }) { alarm ->
                         AlarmRow(
                             alarm = alarm,
@@ -114,23 +121,38 @@ private fun AlarmRow(
     onEnabledChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ListItem(
+    Card(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        headlineContent = {
-            Text(
-                text = "%02d:%02d".format(alarm.hour, alarm.minute),
-                style = MaterialTheme.typography.headlineSmall,
-            )
-        },
-        supportingContent = {
-            Text(text = alarm.repeatSummary().let { if (alarm.label.isBlank()) it else "${alarm.label} · $it" })
-        },
-        trailingContent = {
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            val contentColor = if (alarm.enabled) {
+                MaterialTheme.colorScheme.onSurface
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "%02d:%02d".format(alarm.hour, alarm.minute),
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = contentColor,
+                )
+                Text(
+                    text = alarm.repeatSummary().let { if (alarm.label.isBlank()) it else "${alarm.label} · $it" },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Switch(checked = alarm.enabled, onCheckedChange = onEnabledChange)
-        },
-    )
+        }
+    }
 }
 
 @Composable

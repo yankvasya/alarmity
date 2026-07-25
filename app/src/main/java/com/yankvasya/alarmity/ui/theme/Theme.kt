@@ -39,6 +39,7 @@ fun AlarmityTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
+        shapes = AlarmityShapes,
         typography = Typography,
         content = content,
     )
