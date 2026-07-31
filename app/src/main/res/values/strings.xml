@@ -61,4 +61,22 @@
     <string name="math_wrong_answer">Not quite — try again</string>
     <string name="answer_field">Answer</string>
     <string name="submit">Submit</string>
+    <string name="mission_type_phrase">Type the phrase</string>
+    <string name="type_phrase_hint">Type the phrase above</string>
+    <string name="phrase_mismatch">Doesn\'t match — try again</string>
+    <string name="phrase_round_format">Phrase %1$d of %2$d</string>
+    <string-array name="affirmation_phrases">
+        <item>Today will be a good day</item>
+        <item>I am ready to start the day</item>
+        <item>I will do my best today</item>
+        <item>Getting up feels good</item>
+        <item>I choose a positive start</item>
+        <item>Today I focus on progress</item>
+        <item>I am grateful for this morning</item>
+        <item>Small steps lead to big results</item>
+        <item>I have the energy to begin</item>
+        <item>This day is full of possibility</item>
+        <item>I am in control of my morning</item>
+        <item>One step at a time today</item>
+    </string-array>
 </resources>
