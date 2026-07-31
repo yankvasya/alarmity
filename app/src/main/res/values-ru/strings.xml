@@ -63,4 +63,22 @@
     <string name="math_wrong_answer">Не то — попробуйте ещё раз</string>
     <string name="answer_field">Ответ</string>
     <string name="submit">Подтвердить</string>
+    <string name="mission_type_phrase">Ввести фразу</string>
+    <string name="type_phrase_hint">Введите фразу выше</string>
+    <string name="phrase_mismatch">Не совпадает — попробуйте ещё раз</string>
+    <string name="phrase_round_format">Фраза %1$d из %2$d</string>
+    <string-array name="affirmation_phrases">
+        <item>Сегодня у меня будет хороший день</item>
+        <item>Я готов начать этот день</item>
+        <item>Я сегодня постараюсь приложить все усилия</item>
+        <item>Вставать — это приятно</item>
+        <item>Я выбираю позитивное начало</item>
+        <item>Сегодня я сосредоточен на движении вперёд</item>
+        <item>Я благодарен этому утру</item>
+        <item>Маленькие шаги ведут к большим результатам</item>
+        <item>У меня есть силы начать</item>
+        <item>Этот день полон возможностей</item>
+        <item>Я управляю своим утром</item>
+        <item>Шаг за шагом сегодня</item>
+    </string-array>
 </resources>

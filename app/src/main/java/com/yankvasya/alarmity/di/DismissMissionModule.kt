@@ -3,6 +3,7 @@ package com.yankvasya.alarmity.di
 import com.yankvasya.alarmity.domain.dismiss.DismissMission
 import com.yankvasya.alarmity.domain.dismiss.MathProblemDismissMission
 import com.yankvasya.alarmity.domain.dismiss.SimpleTapDismissMission
+import com.yankvasya.alarmity.domain.dismiss.TypePhraseDismissMission
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -24,4 +25,8 @@ abstract class DismissMissionModule {
     @Binds
     @IntoSet
     abstract fun bindMathProblemDismissMission(impl: MathProblemDismissMission): DismissMission
+
+    @Binds
+    @IntoSet
+    abstract fun bindTypePhraseDismissMission(impl: TypePhraseDismissMission): DismissMission
 }
